@@ -1,14 +1,13 @@
-FROM gradle:4.6.0-jdk8-alpine AS detekt-cli
+FROM openjdk:11.0.1-jdk-stretch AS detekt-cli
 
-RUN set -x \
-    && VERSION="RC6-4" \
+RUN VERSION="1.0.0-RC12" \
     && wget -q "https://github.com/arturbosch/detekt/archive/${VERSION}.tar.gz" \
     && tar xzf "${VERSION}.tar.gz" \
-    && cd "detekt-${VERSION}/detekt-cli" \
-    && ( gradle shadowJar || for _ in $(seq 20); do sleep 5; gradle shadowJar && break; done ) \
-    && mkdir -p ~/detekt-cli \
-    && mv build/libs/*.jar ~/detekt-cli
+    && mv ./detekt-${VERSION} /detekt \
+    && cd /detekt/detekt-cli \
+    && (for _ in $(seq 20); do /detekt/gradlew build shadowJar && break || sleep 5; done) \
+    && ls /detekt/detekt-cli/build/libs
 
 FROM scratch
 
-COPY --from=detekt-cli /home/gradle/detekt-cli /detekt/detekt-cli
+COPY --from=detekt-cli /detekt/detekt-cli/build/libs /detekt/detekt-cli
