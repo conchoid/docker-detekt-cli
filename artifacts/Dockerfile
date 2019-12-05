@@ -1,6 +1,6 @@
 FROM openjdk:11.0.5-jdk-stretch AS detekt-cli
 
-RUN VERSION="1.1.1" \
+RUN VERSION="1.2.2" \
     && wget -q "https://github.com/arturbosch/detekt/archive/${VERSION}.tar.gz" \
     && tar xzf "${VERSION}.tar.gz" \
     && mv ./detekt-${VERSION} /detekt \
